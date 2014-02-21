@@ -17,6 +17,9 @@ public class Nanto {
     /**
      * MEMBER
      */
+    private int waktu_eksekusi; // satua minggu
+    private int energi_harian;
+    private int energi_sekarang;
     private int[] nilai_attribut;
     
     /**
@@ -24,16 +27,19 @@ public class Nanto {
      */
     public static void Inisialisasi() {
         if(my == null) {
-            my = new Nanto(0,0,0,0);
+            my = new Nanto(0,0,0,0,0,0,0);
         }
     }
     
-    private Nanto(int money, int strength, int charm, int brain) {
+    private Nanto(int money, int strength, int charm, int brain, int waktu_eksekusi, int energi_harian, int energi_sekarang) {
         this.nilai_attribut = new int[4];
         this.nilai_attribut[0] = money;
         this.nilai_attribut[1] = strength;
         this.nilai_attribut[2] = charm;
         this.nilai_attribut[3] = brain;
+        this.waktu_eksekusi = waktu_eksekusi;
+        this.energi_harian = energi_harian;
+        this.energi_sekarang = energi_sekarang;
     }
     
     /**
@@ -82,6 +88,18 @@ public class Nanto {
     public static int getBrain() {
         return getAtribut(ATRIBUT.BRAIN);
     }
+
+    public int getWaktu_eksekusi() {
+        return waktu_eksekusi;
+    }
+
+    public int getEnergi_harian() {
+        return energi_harian;
+    }
+
+    public int getEnergi_sekarang() {
+        return energi_sekarang;
+    }
     
     public static void setAtribut(Nanto.ATRIBUT att, int value) {
         Nanto me = Nanto.getMy();
@@ -122,12 +140,25 @@ public class Nanto {
         setAtribut(ATRIBUT.BRAIN, value);
     }
 
+    public void setWaktu_eksekusi(int waktu_eksekusi) {
+        this.waktu_eksekusi = waktu_eksekusi;
+    }
+
+    public void setEnergi_harian(int energi_harian) {
+        this.energi_harian = energi_harian;
+    }
+
+    public void setEnergi_sekarang(int energi_sekarang) {
+        this.energi_sekarang = energi_sekarang;
+    }
+
     public static String tostring() {
         Nanto me = Nanto.getMy();
         return "Nanto{" + "money=" + me.nilai_attribut[0] + 
                 ", strength=" + me.nilai_attribut[1] + 
                 ", charm=" + me.nilai_attribut[2] + 
-                ", brain=" + me.nilai_attribut[3] + '}';
+                ", brain=" + me.nilai_attribut[3] +
+                ", energi=" + me.energi_sekarang + '/' + me.energi_harian + '}';
     }
     
 }

@@ -10,6 +10,7 @@ package itb.ai;
  */
 public class Tempat {
     public static enum ATRIBUT { MALL, GYMNASIUM, CAFE, UNIVERSITY }
+    public final static int TOTAL_TEMPAT = 4;
     private static Tempat[] tempat;
     
     /**
@@ -101,6 +102,32 @@ public class Tempat {
     public static int getEnergiBerkurangAtribut(Tempat.ATRIBUT atribut) {
         Tempat temp_tempat = Tempat.getMy(Tempat.getIndexTempat(atribut));
         return temp_tempat.jumlah_energi_berkurang;
+    }
+    
+    public static void setNilaiBertambahAtribut(int index, int value) {
+        Tempat.Inisialisasi();
+        if(index >= 0 && index < tempat.length) {
+            Tempat temp_tempat = Tempat.getMy(index);
+            temp_tempat.jumlah_bertambah = value;
+        }
+    }
+    
+    public static void setNilaiBertambahAtribut(Tempat.ATRIBUT atribut, int value) {
+        Tempat temp_tempat = Tempat.getMy(Tempat.getIndexTempat(atribut));
+        temp_tempat.jumlah_bertambah = value;
+    }
+    
+    public static void setEnergiBerkurangAtribut(int index, int value) {
+        Tempat.Inisialisasi();
+        if(index >= 0 && index < tempat.length) {
+            Tempat temp_tempat = Tempat.getMy(index);
+            temp_tempat.jumlah_energi_berkurang = value;
+        }
+    }
+    
+    public static void setEnergiBerkurangAtribut(Tempat.ATRIBUT atribut, int value) {
+        Tempat temp_tempat = Tempat.getMy(Tempat.getIndexTempat(atribut));
+        temp_tempat.jumlah_energi_berkurang = value;
     }
     
 }
