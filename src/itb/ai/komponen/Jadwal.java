@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package itb.ai;
+package itb.ai.komponen;
 
 /**
  *
@@ -10,15 +10,15 @@ package itb.ai;
  */
 public class Jadwal {
     public static enum TYPE {KANDIDAT, TEMPAT};
-    private final static int TIME_ONE_DAY = 12;
-    private final static int TIME_ONE_WEEK = 7 * TIME_ONE_DAY;
+    public final static int TIME_ONE_DAY = 12;
+    public final static int DAY_IN_ONE_WEEK = 7;
+    public final static int TIME_ONE_WEEK = DAY_IN_ONE_WEEK * TIME_ONE_DAY;
     
     /**
      * Member
      */
     private static Jadwal my_tempat, my_kandidat;
     private boolean[][] jadwal;
-    private final Jadwal.TYPE type;
 
     public static void InisialisasiJadwal(int waktu, int kandidat) {
         if(my_tempat == null && my_kandidat == null) {
@@ -34,7 +34,6 @@ public class Jadwal {
      * @param num jumlah kandidat atau jumlah tempat
      */
     private Jadwal(Jadwal.TYPE type, int waktu, int num) {
-        this.type = type;
         jadwal = new boolean[num][];
         for(int i = 0; i < num; i++) {
             jadwal[i] = new boolean[waktu*TIME_ONE_WEEK];
