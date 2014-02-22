@@ -74,17 +74,17 @@ public class FileParser {
 	private int charm;
 	private int brain;
 	private int jumlahKandidat;
-	private String[] enlightmentPerJam;
-	private String[] energiPerJam;
-	private String[] maxPerHari;
+	private int[] enlightmentPerJam;
+	private int[] energiPerJam;
+	private int[] maxPerHari;
 	private String[] kodePrerequisite;
-	private String[] strengthNeeded;
-	private String[] charmNeeded;
-	private String[] brainNeeded;
+	private int[] strengthNeeded;
+	private int[] charmNeeded;
+	private int[] brainNeeded;
 	private int jumlahBarang;
 	private String[] kodeBarang;
-	private String[] hargaBarang;
-	private String[] restockBarang;
+	private int[] hargaBarang;
+	private int[] restockBarang;
 	
 	private boolean[][] candidateSchedule;
 	private boolean[][] siteSchedule;
@@ -119,42 +119,42 @@ public class FileParser {
 			brain = Integer.parseInt(temp[5]);
 			jumlahKandidat = Integer.parseInt(temp[6]);
 			jumlahBarang = Integer.parseInt(temp[generalMultiplier + 1 + (jumlahKandidat*candidateMultiplier)]);
+		
+		
+			enlightmentPerJam = new int[jumlahKandidat];
+			energiPerJam = new int[jumlahKandidat];
+			maxPerHari = new int[jumlahKandidat];
+			kodePrerequisite = new String[jumlahKandidat];
+			strengthNeeded = new int[jumlahKandidat];
+			charmNeeded = new int[jumlahKandidat];
+			brainNeeded = new int[jumlahKandidat];
+			int offset = 0;
+			for (int i = 0;i < jumlahKandidat; i++){
+				offset = generalMultiplier + 1 + (i*candidateMultiplier);
+				enlightmentPerJam[i] = Integer.parseInt(temp[offset]);
+				energiPerJam[i] = Integer.parseInt(temp[offset + 1]);
+				maxPerHari[i] = Integer.parseInt(temp[offset + 2]);
+				kodePrerequisite[i] = temp[offset + 3];
+				strengthNeeded[i] = Integer.parseInt(temp[offset + 4]);
+				charmNeeded[i] = Integer.parseInt(temp[offset + 5]);
+				brainNeeded[i] = Integer.parseInt(temp[offset + 6]);
+			}
+			
+			kodeBarang = new String[jumlahBarang];
+			hargaBarang = new int[jumlahBarang];
+			restockBarang = new int[jumlahBarang];
+			int base = generalMultiplier + 2 + (jumlahKandidat*candidateMultiplier);
+			for(int i = 0; i < jumlahBarang; i++){
+				offset = base + (i*itemMultiplier);
+				kodeBarang[i] = temp[offset];
+				hargaBarang[i] = Integer.parseInt(temp[offset + 1]);
+				restockBarang[i] = Integer.parseInt(temp[offset + 2]);
+			}
+			
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			return;
 		}
-		
-		enlightmentPerJam = new String[jumlahKandidat];
-		energiPerJam = new String[jumlahKandidat];
-		maxPerHari = new String[jumlahKandidat];
-		kodePrerequisite = new String[jumlahKandidat];
-		strengthNeeded = new String[jumlahKandidat];
-		charmNeeded = new String[jumlahKandidat];
-		brainNeeded = new String[jumlahKandidat];
-		int offset = 0;
-		for (int i = 0;i < jumlahKandidat; i++){
-			offset = generalMultiplier + 1 + (i*candidateMultiplier);
-			enlightmentPerJam[i] = temp[offset];
-			energiPerJam[i] = temp[offset + 1];
-			maxPerHari[i] = temp[offset + 2];
-			kodePrerequisite[i] = temp[offset + 3];
-			strengthNeeded[i] = temp[offset + 4];
-			charmNeeded[i] = temp[offset + 5];
-			brainNeeded[i] = temp[offset + 6];
-		}
-		
-		kodeBarang = new String[jumlahBarang];
-		hargaBarang = new String[jumlahBarang];
-		restockBarang = new String[jumlahBarang];
-		int base = generalMultiplier + 2 + (jumlahKandidat*candidateMultiplier);
-		for(int i = 0; i < jumlahBarang; i++){
-			offset = base + (i*itemMultiplier);
-			kodeBarang[i] = temp[offset];
-			hargaBarang[i] = temp[offset + 1];
-			restockBarang[i] = temp[offset + 2];
-		}
-		
-		
 	}
 	
 	public void parseCandidateSchedule(String candidateScheduleFile){
@@ -286,44 +286,44 @@ public class FileParser {
 		return jumlahBarang;
 	}
 	
-	public int getEnlightmentPerJam(int n) throws NumberFormatException {
-		return Integer.parseInt(enlightmentPerJam[n]);
+	public int getEnlightmentPerJam(int n){
+		return enlightmentPerJam[n];
 	}
 	
-	public int getEnergiPerJam(int n) throws NumberFormatException {
-		return Integer.parseInt(energiPerJam[n]);
+	public int getEnergiPerJam(int n){
+		return energiPerJam[n];
 	}
 	
-	public int getMaxPerHari(int n) throws NumberFormatException {
-		return Integer.parseInt(maxPerHari[n]);
+	public int getMaxPerHari(int n){
+		return maxPerHari[n];
 	}
 	
 	public String getKodePrereq(int n){
 		return kodePrerequisite[n];
 	}
 	
-	public int getStrengthNeeded(int n) throws NumberFormatException {
-		return Integer.parseInt(strengthNeeded[n]);
+	public int getStrengthNeeded(int n){
+		return strengthNeeded[n];
 	}
 	
-	public int getCharmNeeded(int n) throws NumberFormatException {
-		return Integer.parseInt(charmNeeded[n]);
+	public int getCharmNeeded(int n){
+		return charmNeeded[n];
 	}
 	
-	public int getBrainNeeded(int n) throws NumberFormatException {
-		return Integer.parseInt(brainNeeded[n]);
+	public int getBrainNeeded(int n){
+		return brainNeeded[n];
 	}
 	
 	public String getKodeBarang(int m){
 		return kodeBarang[m];
 	}
 	
-	public int getHargaBarang(int m) throws NumberFormatException {
-		return Integer.parseInt(hargaBarang[m]);
+	public int getHargaBarang(int m){
+		return hargaBarang[m];
 	}
 	
-	public int getRestockPerHari(int m) throws NumberFormatException {
-		return Integer.parseInt(restockBarang[m]);
+	public int getRestockPerHari(int m){
+		return restockBarang[m];
 	}
 	
 	public boolean getCandidateSchedule(int i, int j){
