@@ -198,6 +198,14 @@ public class Kandidat {
         return brain;
     }
     
+    public static String getGenKandidat() {
+        String _kandidat = "";
+        for(int i = 0; i < TOTAL; i++) {
+            _kandidat += kandidat[i].getCandidate_number();
+        }
+        return _kandidat;
+    }
+    
     public static void inisialTotalKandidat(int total) {
         if(TOTAL == 0) TOTAL = total;
     }

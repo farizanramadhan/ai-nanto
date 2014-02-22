@@ -4,6 +4,7 @@
  */
 package itb.ai;
 
+import itb.ai.ga.GenLaboratory;
 import itb.ai.komponen.Barang;
 import itb.ai.komponen.Jadwal;
 import itb.ai.komponen.Kandidat;
@@ -88,5 +89,6 @@ public class AINanto_NantiAja {
         }
         
         // SEKARANG NGAPAIN???
+        GenLaboratory.Inisialisasi();
     }
 }

@@ -10,6 +10,7 @@ package itb.ai.komponen;
  */
 public class Tempat {
     public static enum ATRIBUT { MALL, GYMNASIUM, CAFE, UNIVERSITY }
+    private static String GEN = "mgcu";
     public final static int TOTAL_TEMPAT = 4;
     private static Tempat[] tempat;
     
@@ -46,6 +47,10 @@ public class Tempat {
     /**
      * METODA
      */
+    public static String getGenKandidat() {
+        return GEN;
+    }
+    
     private static int getIndexTempat(Tempat.ATRIBUT atribut) {
         int return_val = 0;
         switch(atribut) {

@@ -240,7 +240,15 @@ public class Barang {
     
     public int getStok_harian() {
         return stok_harian;
-    }    
+    }
+    
+    public static String getGenKandidat() {
+        String kandidat = "";
+        for(int i = 0; i < TOTAL; i++) {
+            kandidat += barang[i].getKode();
+        }
+        return kandidat;
+    }
 
     @Override
     public String toString() {
