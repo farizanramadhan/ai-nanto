@@ -37,7 +37,7 @@ public class Jadwal {
         jadwal = new boolean[num][];
         for(int i = 0; i < num; i++) {
             jadwal[i] = new boolean[waktu*TIME_ONE_WEEK];
-            for(int j = 0; j < waktu; j++) {
+            for(int j = 0; j < waktu*TIME_ONE_WEEK; j++) {
                 jadwal[i][j] = false;
             }
         }
