@@ -61,12 +61,19 @@ public class Kandidat {
         return TOTAL;
     }
     
+    public static boolean isKarakterKandidat(char _cid) {
+        if(_cid >= '0' && _cid <= '9')
+            return Integer.parseInt(String.valueOf(_cid)) <= TOTAL;
+        else
+            return false;
+    }
+    
     public static boolean isNumberKandidatEksis(char _cid) {
-        return getIndexKandidat(_cid)<=TOTAL && getIndexKandidat(_cid) > 0;
+        return getIndexKandidat(_cid)<TOTAL && getIndexKandidat(_cid) >= 0;
     }
     
     public static int getIndexKandidat(char _cid) {
-        return Integer.parseInt(String.valueOf(_cid));
+        return Integer.parseInt(String.valueOf(_cid)) - 1;
     }
     
     public static int getCandidateNumber(char _cid) {
@@ -174,6 +181,15 @@ public class Kandidat {
         }
     }
 
+    public static int getMaxStrength() {
+        int max = 0;
+        for(int i = 0; i < kandidat.length; i++) {
+            if(max < kandidat[i].getStrength())
+                max = kandidat[i].getStrength();
+        }
+        return max;
+    }
+    
     public static int getStrength(char _cid) {
         return kandidat[getIndexKandidat(_cid)].getStrength();
     }
@@ -182,6 +198,15 @@ public class Kandidat {
         return strength;
     }
 
+    public static int getMaxCharm() {
+        int max = 0;
+        for(int i = 0; i < kandidat.length; i++) {
+            if(max < kandidat[i].getCharm())
+                max = kandidat[i].getCharm();
+        }
+        return max;
+    }
+    
     public static int getCharm(char _cid) {
         return kandidat[getIndexKandidat(_cid)].getCharm();
     }
@@ -190,6 +215,15 @@ public class Kandidat {
         return charm;
     }
 
+    public static int getMaxBrain() {
+        int max = 0;
+        for(int i = 0; i < kandidat.length; i++) {
+            if(max < kandidat[i].getBrain())
+                max = kandidat[i].getBrain();
+        }
+        return max;
+    }
+    
     public static int getBrain(char _cid) {
         return kandidat[getIndexKandidat(_cid)].getBrain();
     }

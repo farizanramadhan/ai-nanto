@@ -329,11 +329,10 @@ public class Nanto {
         if(isBarangEksis(String.valueOf(kode_barang))) {
             int indeks = getBarangIndeks(String.valueOf(kode_barang));
             this.box_barang_jumlah.set(indeks, 
-                    this.box_barang_jumlah.get(indeks) 
-                    + Barang.getStokHarian(kode_barang));
+                    this.box_barang_jumlah.get(indeks) + 1);
         } else {
             this.box_barang.add(String.valueOf(kode_barang));
-            this.box_barang_jumlah.add(Barang.getStokHarian(kode_barang));
+            this.box_barang_jumlah.add(1);
         }
     }
 

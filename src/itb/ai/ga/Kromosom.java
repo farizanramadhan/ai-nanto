@@ -20,6 +20,7 @@ public class Kromosom {
      */
     private String kromosom;
     private int enlightenment;
+    private long pseuenlightenment;
     
     /**
      * KONSTRUKTOR
@@ -37,6 +38,10 @@ public class Kromosom {
 
     public int getEnlightenment() {
         return enlightenment;
+    }
+    
+    public long getPseudoEnlightenment() {
+        return pseuenlightenment;
     }
 
     public void setKromosom(String kromosom) {
@@ -60,12 +65,14 @@ public class Kromosom {
                 if(aksi != '0') {
                     // Apakah aksi ke tempat
                     if(Tempat.getIndexTempat(aksi) != -1) {
-                        if(nanto.getEnergiSekarang() >= Tempat.getEnergiBerkurangAtribut(aksi)) {
+                        if(nanto.getEnergiSekarang() >= Tempat.getEnergiBerkurangAtribut(aksi) 
+                                && Jadwal.isAvailable(Jadwal.TYPE.TEMPAT, Tempat.getIndexTempat(aksi), it2)) {
                             nanto.setincatribut(Tempat.getAtributNanto(aksi), Tempat.getNilaiBertambahAtribut(aksi));
                             nanto.setEnergiSekarang(nanto.getEnergiSekarang() - Tempat.getEnergiBerkurangAtribut(aksi));
                         }
-                    } else if(Kandidat.isNumberKandidatEksis(aksi)) { // Apakah aksi ke kandidat
-                        if(nanto.getEnergiSekarang() >= Kandidat.getEnergyHourly(aksi)
+                    } else if(Kandidat.isKarakterKandidat(aksi)) { // Apakah aksi ke kandidat
+                        if(Jadwal.isAvailable(Jadwal.TYPE.KANDIDAT, Kandidat.getIndexKandidat(aksi), it2)
+                                && nanto.getEnergiSekarang() >= Kandidat.getEnergyHourly(aksi)
                                 && Kandidat.getMeetingRest(aksi) > 0
                                 && nanto.getstrength() >= Kandidat.getStrength(aksi)
                                 && nanto.getcharm() >= Kandidat.getCharm(aksi)
@@ -84,6 +91,7 @@ public class Kromosom {
                         if(Barang.getStokSekarang(aksi) > 0
                                 && nanto.getmoney() > Barang.getHarga(aksi)) {
                             Barang.decStokSekarang(aksi);
+                            nanto.addBarang(aksi);
                             nanto.setatribut(Nanto.ATRIBUT.MONEY, nanto.getmoney() - Barang.getHarga(aksi));
                         }
                     }
@@ -93,5 +101,9 @@ public class Kromosom {
         }
         
         this.enlightenment = enlight;
+        this.pseuenlightenment = (nanto.getbrain() + nanto.getcharm()
+                + nanto.getstrength());
+        this.pseuenlightenment -= (Kandidat.getMaxBrain() + Kandidat.getMaxCharm()
+                + Kandidat.getMaxStrength());
     }
 }

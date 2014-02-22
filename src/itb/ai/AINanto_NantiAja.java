@@ -36,6 +36,7 @@ public class AINanto_NantiAja {
                 FileParser.getInstance().getCharmAwal(),
                 FileParser.getInstance().getBrainAwal());
         Nanto.setWaktu_eksekusi(FileParser.getInstance().getWaktu());
+        Nanto.setEnergi_harian(FileParser.getInstance().getEnergi());
         
         // BARANG
         int num_barang = FileParser.getInstance().getJumlahBarang();
@@ -55,7 +56,7 @@ public class AINanto_NantiAja {
         Kandidat.inisialTotalKandidat(num_kandidat);
         Kandidat.Inisialisasi();
         for(int i = 0; i < num_kandidat; i++) {
-            Kandidat.setAll(Character.forDigit(i, 10),
+            Kandidat.setAll(Character.forDigit(i+1, 10),
                     FileParser.getInstance().getEnlightmentPerJam(i), 
                     FileParser.getInstance().getEnergiPerJam(i), 
                     FileParser.getInstance().getMaxPerHari(i),
@@ -64,7 +65,7 @@ public class AINanto_NantiAja {
                     FileParser.getInstance().getBrainNeeded(i));
             temp_prereq = FileParser.getInstance().getKodePrereq(i);
             for(int j = 0; j < temp_prereq.length(); j++) {
-                Kandidat.addPrereq(Character.forDigit(i, 10), 
+                Kandidat.addPrereq(Character.forDigit(i+1, 10), 
                         String.valueOf(temp_prereq.charAt(j)));
             }
         }
@@ -83,12 +84,21 @@ public class AINanto_NantiAja {
         // Jadwal untuk tempat
         for(int i = 0; i < Tempat.TOTAL_TEMPAT; i++) {
             for(int j = 0; j < waktu; j++) {
-                Jadwal.setAvailable(Jadwal.TYPE.KANDIDAT, i, j,
+                Jadwal.setAvailable(Jadwal.TYPE.TEMPAT, i, j,
                         FileParser.getInstance().getSiteSchedule(i, j));
             }
         }
         
         // SEKARANG NGAPAIN???
         GenLaboratory.Inisialisasi();
+        GenLaboratory.CalcKromosomEnlightenment();
+        while(GenLaboratory.willNext()) {
+            GenLaboratory.selectKromosom();
+            GenLaboratory.crossOverKromosom();
+            GenLaboratory.mutasiKromosom();
+            GenLaboratory.CalcKromosomEnlightenment();
+        }
+        System.out.println(GenLaboratory.getMaxEnlightenment());
+        System.out.println(GenLaboratory.getStringKromosom(0));
     }
 }
