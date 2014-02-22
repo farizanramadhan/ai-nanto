@@ -430,9 +430,9 @@ public class FileParser {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String generalFilePath = "general.txt";
-    	String candidateScheduleFilePath = "candidate.txt";
-    	String siteScheduleFilePath = "site.txt";
+		String generalFilePath = "asset/general.txt";
+    	String candidateScheduleFilePath = "asset/candidate.txt";
+    	String siteScheduleFilePath = "asset/site.txt";
     	FileParser.getInstance().parseAll(generalFilePath, candidateScheduleFilePath, siteScheduleFilePath);
     	FileParser.getInstance().printAll();
 	}
