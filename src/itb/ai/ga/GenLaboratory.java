@@ -16,11 +16,13 @@ import java.util.Random;
  * @author Setyo Legowo <setyo.legowo@live.com>
  */
 public class GenLaboratory {
-    public static int MAX_KROMOSOM = 4;
+    public static int MAX_KROMOSOM = 16;
     private ArrayList<Kromosom> list_kromosom;
     private static GenLaboratory instance;
     private static int CO_minus;
+    private final static int CO_minus_default = 0;
     private static double MUTATE_rate;
+    private final static double MUTATE_rate_default = 0.5;
     
     /**
      * KONSTRUKTOR
@@ -29,10 +31,10 @@ public class GenLaboratory {
         if(instance == null) {
             instance = new GenLaboratory();
             for(int i = 0; i < MAX_KROMOSOM; i++) {
-                instance.list_kromosom.add(instance.GenerateNewGen());
+                instance.list_kromosom.add(instance.GenerateNewGen((i + 1) % 2 == 0));
             }
-            CO_minus = 0;
-            MUTATE_rate = 0.75;
+            CO_minus = CO_minus_default;
+            MUTATE_rate = MUTATE_rate_default + 0.3;
         }
     }
     
@@ -40,12 +42,12 @@ public class GenLaboratory {
         list_kromosom = new ArrayList<>();
     }
     
-    private Kromosom GenerateNewGen() {
+    private Kromosom GenerateNewGen(boolean isRandom) {
         String list_calon = "0";
         int kromosom_length = Nanto.getTotalWorkDay();
         Kromosom kromosom;
         
-        list_calon += Tempat.getGenKandidat() + Tempat.getGenKandidat() + "0";
+        list_calon += Tempat.getGenKandidat() + "0";
         list_calon += Kandidat.getGenKandidat() + "0";
         list_calon += Barang.getGenKandidat() + "0";
         
@@ -55,8 +57,14 @@ public class GenLaboratory {
         char[] temp_calon = list_calon.toCharArray();
         list_calon = String.valueOf(temp_calon, 0, calon_length);
         String string_kromosom = "";
-        for(int i = 0; i < kromosom_length; i++) {
-            string_kromosom += list_calon.charAt(rand.nextInt(calon_length));
+        if(isRandom) {
+            for(int i = 0; i < kromosom_length; i++) {
+                string_kromosom += list_calon.charAt(rand.nextInt(calon_length));
+            }
+        } else {
+            for(int i = 0; i < kromosom_length; i++) {
+                string_kromosom += list_calon.charAt(i % calon_length);
+            }
         }
         
         kromosom = new Kromosom(string_kromosom);
@@ -151,29 +159,57 @@ public class GenLaboratory {
         
         if(indeks_hapus > -1 && indeks_duplikat > -1) {
             if(indeks_hapus2 > -1 && indeks_duplikat2 > -1
-                    && instance.list_kromosom.get(indeks_hapus2).getEnlightenment() >= instance.list_kromosom.get(indeks_duplikat2).getEnlightenment()) {
+                    && instance.list_kromosom.get(indeks_hapus2).getEnlightenment() > instance.list_kromosom.get(indeks_duplikat2).getEnlightenment()) {
+                // Karena dari enlightenment yang diduplikat lebih kecil daripada yang akan dihapus
+                // maka pilih dari pseudo englightenment
                 Kromosom kromosom = new Kromosom(instance.list_kromosom.get(indeks_duplikat).getKromosom());
                 instance.list_kromosom.remove(indeks_hapus);
                 instance.list_kromosom.add(kromosom);
                 instance.list_kromosom.get(total_kromosom - 1).calcEnlightenment(Nanto.getOriginCopy());
             } else {
-                Kromosom kromosom = new Kromosom(instance.list_kromosom.get(indeks_duplikat2).getKromosom());
-                instance.list_kromosom.remove(indeks_hapus2);
-                instance.list_kromosom.add(kromosom);
-                instance.list_kromosom.get(total_kromosom - 1).calcEnlightenment(Nanto.getOriginCopy());
+                if(indeks_hapus != indeks_hapus2 || indeks_duplikat != indeks_duplikat2) {
+                    // Usaha untuk mendapatkan enlightenment terbaik dengan
+                    // menghapus pseudoenlightenment terburuk
+                    Kromosom kromosom = new Kromosom(instance.list_kromosom.get(indeks_duplikat2).getKromosom());
+                    instance.list_kromosom.remove(indeks_hapus);
+                    instance.list_kromosom.add(kromosom);
+                    instance.list_kromosom.get(total_kromosom - 1).calcEnlightenment(Nanto.getOriginCopy());
+                } else { 
+                    // Jika indeks yang akan dihapus == indeks yang akan diduplikat dan keduanya sama
+                    // dilihat dari enlightenment dan pseudonya, maka buat gen baru di indeks tersebut
+                    Kromosom kromosom = instance.GenerateNewGen((indeks_hapus + 1) % 2 == 0);
+                    instance.list_kromosom.remove(indeks_hapus);
+                    instance.list_kromosom.add(indeks_hapus,kromosom);
+                    instance.list_kromosom.get(indeks_hapus).calcEnlightenment(Nanto.getOriginCopy());
+                }
             }
         }
     }
     
+    public static void renewLastListKromosom(double percent) {
+        int total_kromosom = instance.list_kromosom.size();
+        int total_change = (int) (total_kromosom * percent);
+        Kromosom kromosom;
+        
+        for(int i = total_kromosom - total_change; i < total_kromosom; i++) {
+            kromosom = instance.GenerateNewGen((i + 1) % 2 == 0);
+            instance.list_kromosom.remove(i);
+            instance.list_kromosom.add(i,kromosom);
+            instance.list_kromosom.get(i).calcEnlightenment(Nanto.getOriginCopy());
+        }
+        
+        CO_minus = CO_minus_default;
+        MUTATE_rate = MUTATE_rate_default;
+    }
+    
     public static void crossOverKromosom() {
         int total_kromosom = instance.list_kromosom.size();
-        for(int i = 0; i < total_kromosom; i+=2) {
+        int kromosom_length = instance.list_kromosom.get(0).getKromosom().length();
+        for(int i = 0; i < total_kromosom - 1; i++) {
             crossOverKromosom(i, i+1);
         }
-        if(CO_minus >= 0 && MUTATE_rate > 0.5)
-            CO_minus += 2;
-        else if(CO_minus > 0)
-            CO_minus -= 1;
+        if(MUTATE_rate > CO_minus_default && CO_minus < kromosom_length)
+            CO_minus += 1;
     }
     
     private static void crossOverKromosom(int index1, int index2) {
@@ -209,15 +245,21 @@ public class GenLaboratory {
     private static void mutationKromosom(int index, double rate) {
         char[] skrom = instance.list_kromosom.get(index).getKromosom().toCharArray();
         int kromosom_length = instance.list_kromosom.get(index).getKromosom().length();
+        int kan = instance.list_kromosom.get(index).getKandidatFail();
+        int bar = instance.list_kromosom.get(index).getBarangFail();
+        int tem = instance.list_kromosom.get(index).getTempatFail();
         int start = 0;
         String list_calon = "0";
         int length_calon;
         Random rand = new Random();
         
         rand.setSeed(System.nanoTime());
-        list_calon += Tempat.getGenKandidat() + Tempat.getGenKandidat() + Tempat.getGenKandidat() + "0";
-        list_calon += Kandidat.getGenKandidat() + "0";
-        list_calon += Barang.getGenKandidat() + "0";
+        list_calon += Barang.getGenKandidat() + "0"; 
+        list_calon += Tempat.getGenKandidat() + "0"; 
+        //list_calon += Kandidat.getGenKandidat() + "0";
+        if(bar < tem || bar < kan) list_calon += Barang.getGenKandidat() + "0";
+        if(tem < bar || tem < kan) list_calon += Tempat.getGenKandidat() + "0";
+        if(kan < tem || kan < bar) list_calon += Kandidat.getGenKandidat() + "0";
         length_calon = list_calon.length();
         int total_loop = (int) (kromosom_length*rate);
         int mutation_num;
@@ -232,14 +274,22 @@ public class GenLaboratory {
         if(instance.list_kromosom.get(index).getEnlightenment() < kromosom.getEnlightenment())
             instance.list_kromosom.get(index).setKromosom(String.copyValueOf(skrom));
     }
-    
-    public static boolean isEnglightenmentPositive() {
-        boolean isExist = false;
+
+    public static void cetakKromosom() {
+        System.out.println("GEN LABORATORY");
+        System.out.println("====================================================");
         int total_kromosom = instance.list_kromosom.size();
-        for(int i = 0; i < total_kromosom && !isExist; i++) {
-            if(instance.list_kromosom.get(i).getEnlightenment() > 0)
-                isExist = true;
+        Kromosom kromosom;
+        for(int i = 0; i < total_kromosom; i++) {
+            kromosom = instance.list_kromosom.get(i);
+            System.out.println("Kromosom: " + i);
+            System.out.println(kromosom.getKromosom());
+            System.out.println("Enlightenment=" + kromosom.getEnlightenment());
+            System.out.println("PseudoEnlightenment=" + kromosom.getPseudoEnlightenment());
+            System.out.println("Err: Barang=" + kromosom.getBarangFail()
+                    + ", Kandidat=" + kromosom.getKandidatFail()
+                    + ", Tempat=" + kromosom.getTempatFail());
+            System.out.println();
         }
-        return isExist;
     }
 }

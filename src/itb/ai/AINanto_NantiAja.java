@@ -92,13 +92,38 @@ public class AINanto_NantiAja {
         // SEKARANG NGAPAIN???
         GenLaboratory.Inisialisasi();
         GenLaboratory.CalcKromosomEnlightenment();
-        while(GenLaboratory.willNext()) {
-            GenLaboratory.selectKromosom();
-            GenLaboratory.crossOverKromosom();
-            GenLaboratory.mutasiKromosom();
-            GenLaboratory.CalcKromosomEnlightenment();
+        int it = 0;
+        double renew_rate = 0.5;
+        int maks_iterate = 100000*(32/GenLaboratory.MAX_KROMOSOM);
+        while(GenLaboratory.willNext() && it < maks_iterate) {
+            while(GenLaboratory.willNext() && it < maks_iterate) {
+                GenLaboratory.selectKromosom();
+                GenLaboratory.crossOverKromosom();
+                GenLaboratory.mutasiKromosom();
+                GenLaboratory.CalcKromosomEnlightenment();
+                it++;
+                if(it % 10000 == 0) {
+                    System.out.println("Checkpoint: Iterasi ke-" + it
+                        + ", Max Englightenment="
+                        + GenLaboratory.getMaxEnlightenment());
+                }
+                if(it % 50000 == 0 && it > 100000) {
+                    System.out.println("Generate Kromosom Baru. Iterasi ke-" + it
+                            + ", Max Englightenment="
+                            + GenLaboratory.getMaxEnlightenment());
+                    GenLaboratory.renewLastListKromosom(renew_rate);
+                    if(renew_rate > 0.1) renew_rate -= 0.02;
+                }
+            }
+            if(it < 100000) {
+                System.out.println("Generate Kromosom Baru. Iterasi ke-" + it
+                        + ", Max Englightenment="
+                        + GenLaboratory.getMaxEnlightenment());
+                GenLaboratory.renewLastListKromosom(renew_rate + 0.1);
+                if(renew_rate > 0.1) renew_rate -= 0.02;
+            }
         }
-        System.out.println(GenLaboratory.getMaxEnlightenment());
-        System.out.println(GenLaboratory.getStringKromosom(0));
+        GenLaboratory.cetakKromosom();
+        System.out.println("Jumlah iterasi = " + it);
     }
 }

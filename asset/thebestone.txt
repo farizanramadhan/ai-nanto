@@ -1,0 +1,4 @@
+1uug0uu3ccccDuggucggucBguuuug4444cccuuggg4444cccuuuug4444cccuuggg4444cccDDuuug4ggcccBgggggg44ccc2gggg4433cccgAg3g4443cc11133g4g4122c113224434221113234444221132g24413221
+Enlightenment=283
+PseudoEnlightenment=9
+Err: Barang=0, Kandidat=3, Tempat=5
