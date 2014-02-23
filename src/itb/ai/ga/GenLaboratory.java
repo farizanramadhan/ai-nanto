@@ -8,8 +8,8 @@ import itb.ai.komponen.Barang;
 import itb.ai.komponen.Kandidat;
 import itb.ai.komponen.Nanto;
 import itb.ai.komponen.Tempat;
+import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  *
@@ -23,18 +23,21 @@ public class GenLaboratory {
     private final static int CO_minus_default = 0;
     private static double MUTATE_rate;
     private final static double MUTATE_rate_default = 0.5;
+    private static SecureRandom rand;
     
     /**
      * KONSTRUKTOR
      */
     public static void Inisialisasi() {
         if(instance == null) {
+            rand = new SecureRandom();
+            rand.setSeed(SecureRandom.getSeed(3));
             instance = new GenLaboratory();
             for(int i = 0; i < MAX_KROMOSOM; i++) {
-                instance.list_kromosom.add(instance.GenerateNewGen((i + 1) % 2 == 0));
+                instance.list_kromosom.add(instance.GenerateNewGen((i + 1) % 4 != 0));
             }
             CO_minus = CO_minus_default;
-            MUTATE_rate = MUTATE_rate_default + 0.3;
+            MUTATE_rate = MUTATE_rate_default + 0.15;
         }
     }
     
@@ -47,11 +50,10 @@ public class GenLaboratory {
         int kromosom_length = Nanto.getTotalWorkDay();
         Kromosom kromosom;
         
-        list_calon += Tempat.getGenKandidat() + "0";
         list_calon += Kandidat.getGenKandidat() + "0";
+        list_calon += Tempat.getGenKandidat() + Tempat.getGenKandidat() + "0";
         list_calon += Barang.getGenKandidat() + "0";
         
-        Random rand = new Random();
         rand.setSeed(System.nanoTime());
         int calon_length = list_calon.length();
         char[] temp_calon = list_calon.toCharArray();
@@ -177,7 +179,11 @@ public class GenLaboratory {
                 } else { 
                     // Jika indeks yang akan dihapus == indeks yang akan diduplikat dan keduanya sama
                     // dilihat dari enlightenment dan pseudonya, maka buat gen baru di indeks tersebut
-                    Kromosom kromosom = instance.GenerateNewGen((indeks_hapus + 1) % 2 == 0);
+                    Kromosom kromosom;
+                    if(indeks_hapus == indeks_duplikat)
+                        kromosom = instance.GenerateNewGen((indeks_hapus + 1) % 2 == 0);
+                    else
+                        kromosom = new Kromosom(instance.list_kromosom.get(indeks_duplikat).getKromosom());
                     instance.list_kromosom.remove(indeks_hapus);
                     instance.list_kromosom.add(indeks_hapus,kromosom);
                     instance.list_kromosom.get(indeks_hapus).calcEnlightenment(Nanto.getOriginCopy());
@@ -191,8 +197,9 @@ public class GenLaboratory {
         int total_change = (int) (total_kromosom * percent);
         Kromosom kromosom;
         
+        rand.setSeed(SecureRandom.getSeed(3));
         for(int i = total_kromosom - total_change; i < total_kromosom; i++) {
-            kromosom = instance.GenerateNewGen((i + 1) % 2 == 0);
+            kromosom = instance.GenerateNewGen((i + 1) % 4 == 0);
             instance.list_kromosom.remove(i);
             instance.list_kromosom.add(i,kromosom);
             instance.list_kromosom.get(i).calcEnlightenment(Nanto.getOriginCopy());
@@ -208,7 +215,7 @@ public class GenLaboratory {
         for(int i = 0; i < total_kromosom - 1; i++) {
             crossOverKromosom(i, i+1);
         }
-        if(MUTATE_rate > CO_minus_default && CO_minus < kromosom_length)
+        if(MUTATE_rate > CO_minus_default && CO_minus < kromosom_length/2)
             CO_minus += 1;
     }
     
@@ -216,11 +223,11 @@ public class GenLaboratory {
         char[] skrom1 = instance.list_kromosom.get(index1).getKromosom().toCharArray();
         char[] skrom2 = instance.list_kromosom.get(index2).getKromosom().toCharArray();
         int kromosom_length = instance.list_kromosom.get(index2).getKromosom().length();
-        Random rand = new Random();
         
         rand.setSeed(System.nanoTime());
         int start_cross = rand.nextInt(kromosom_length/2);
         int end_cross = start_cross + kromosom_length/2 - CO_minus;
+        end_cross = end_cross > start_cross? end_cross:kromosom_length;
         char temp_char;
         for(int it = start_cross; it < end_cross; it++) {
             temp_char = skrom1[it];
@@ -248,25 +255,24 @@ public class GenLaboratory {
         int kan = instance.list_kromosom.get(index).getKandidatFail();
         int bar = instance.list_kromosom.get(index).getBarangFail();
         int tem = instance.list_kromosom.get(index).getTempatFail();
-        int start = 0;
+        int end = kromosom_length;
         String list_calon = "0";
         int length_calon;
-        Random rand = new Random();
         
         rand.setSeed(System.nanoTime());
         list_calon += Barang.getGenKandidat() + "0"; 
-        list_calon += Tempat.getGenKandidat() + "0"; 
+        if(bar < tem && bar < kan) list_calon += Barang.getGenKandidat() + "0";
+        list_calon += Tempat.getGenKandidat() + Tempat.getGenKandidat() + "0";
+        if(tem < bar || tem < kan) list_calon += Tempat.getGenKandidat() + Tempat.getGenKandidat() + "0";
         //list_calon += Kandidat.getGenKandidat() + "0";
-        if(bar < tem || bar < kan) list_calon += Barang.getGenKandidat() + "0";
-        if(tem < bar || tem < kan) list_calon += Tempat.getGenKandidat() + "0";
-        if(kan < tem || kan < bar) list_calon += Kandidat.getGenKandidat() + "0";
+        if(kan < tem && kan < bar) list_calon += Kandidat.getGenKandidat() + "0";
         length_calon = list_calon.length();
         int total_loop = (int) (kromosom_length*rate);
         int mutation_num;
         for(int i = 0; i < total_loop; i++) {
-            mutation_num = (rand.nextInt(kromosom_length - start)) % kromosom_length;
+            mutation_num = rand.nextInt(end);
             skrom[mutation_num] = list_calon.charAt(rand.nextInt(length_calon));
-            start = start + (kromosom_length - start)/total_loop;
+            end -= kromosom_length/total_loop;
         }
         
         Kromosom kromosom = new Kromosom(String.copyValueOf(skrom));
